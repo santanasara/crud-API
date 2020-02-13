@@ -26,12 +26,25 @@ public class PersonDataAccessService implements PersonDao{
 
     @Override
     public int deletePersonById(UUID id) {
-        return 0;
+        Optional<Person> selectedPerson = selectPersonById(id);
+        if(selectedPerson.isEmpty()){
+            return -1;
+        }
+        DB.remove(selectedPerson.get());
+        return 1;
     }
 
     @Override
     public int updatePersonById(UUID id, Person person) {
-        return 0;
+
+        if (!(selectPersonById(id)).toString().equals("{}")){
+                selectPersonById(id).map(p -> {
+                int indexOfPersonToUpdate = DB.indexOf(person);
+                DB.set(indexOfPersonToUpdate, person);
+                return 1;
+            });
+        }
+        return -1;
     }
 
     @Override
