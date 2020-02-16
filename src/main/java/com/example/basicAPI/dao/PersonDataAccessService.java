@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository("fakeDao")
+@Repository("Dao")
 public class PersonDataAccessService implements PersonDao{
 
     private static List<Person> DB = new ArrayList<>();
@@ -38,14 +38,25 @@ public class PersonDataAccessService implements PersonDao{
     public int updatePersonById(UUID id, Person person) {
 
         if (!(selectPersonById(id)).toString().equals("{}")){
-                selectPersonById(id).map(p -> {
-                int indexOfPersonToUpdate = DB.indexOf(person);
-                DB.set(indexOfPersonToUpdate, person);
+            selectPersonById(id).map(p -> {
+                int indexOfPersonToUpdate = DB.indexOf(p);
+                DB.set(indexOfPersonToUpdate, new Person(id, person.getName()));
                 return 1;
             });
         }
         return -1;
     }
+
+//        public int updatePersonById(UUID id, Person person) {
+//            return selectPersonById(id).map(p -> {
+//                int indexOfPersonToUpdate = DB.indexOf(person);
+//                if(indexOfPersonToUpdate >= 0){
+//                    DB.set(indexOfPersonToUpdate, person);
+//                    return 1;
+//                }
+//                return 0;
+//            }).orElse(0);
+//        }
 
     @Override
     public Optional<Person> selectPersonById(UUID id) {
