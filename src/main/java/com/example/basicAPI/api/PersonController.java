@@ -1,45 +1,38 @@
 package com.example.basicAPI.api;
 
 import com.example.basicAPI.model.Person;
-import com.example.basicAPI.service.PersonService;
+import com.example.basicAPI.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RequestMapping("api/v1/person")
 @RestController
 public class PersonController {
-    private final PersonService personService;
 
     @Autowired
-    public PersonController(PersonService personService) {
-        this.personService = personService;
-    }
+    PersonRepository personRepository;
 
     @PostMapping
     public void addPerson(@RequestBody Person person){
-        personService.addPerson(person);
+        personRepository.save(person);
     }
 
     @GetMapping
     public List<Person> getAllPeople(){
-        return personService.getAllPeople();
+        return personRepository.findAll();
     }
 
     @GetMapping(path = "{id}")
-    public Person getPersonById(@PathVariable("id") UUID id){
-        return personService.getPersonById(id).orElse(null);
+    public Optional<Person> getPersonById(@PathVariable("id") UUID id){
+        return personRepository.findById(id);
     }
 
     @DeleteMapping(path = "{id}")
-    public int deletePerson(@PathVariable("id") UUID id){
-        return personService.deletePerson(id);
+    public void deletePerson(@PathVariable("id") UUID id){
+        personRepository.deleteById(id);
     }
 
-    @PutMapping(path = "{id}")
-    public void updatePerson(@PathVariable("id") UUID id, @RequestBody Person person){
-        personService.updatePerson(id, person);
-    }
 }
